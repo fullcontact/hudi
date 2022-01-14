@@ -1,0 +1,33 @@
+{
+  "name": "sovrn_maids_dedup_test",
+  "virtualClusterId": "mxfh7ivxhhnw0gswzd5jdxx11",
+  "executionRoleArn": "arn:aws:iam::966965295085:role/eks-spark-dataops",
+  "releaseLabel": "emr-5.32.0-latest",
+  "configurationOverrides": {
+    "monitoringConfiguration": {
+      "persistentAppUI": "ENABLED",
+      "s3MonitoringConfiguration": {
+        "logUri": "s3://fullcontact-data-imports/sovrn/test/"
+      }
+    }
+  },
+  "jobDriver": {
+    "sparkSubmitJobDriver": {
+      "entryPoint": "s3://fullcontact-data-pipeline/pipeline-libs/production/latest/data-pipeline.jar",
+      "entryPointArguments": [
+        "--input-path",
+        "s3://fullcontact-data-imports/sovrn/mobile_data/202111{29,30}/",
+        "--input-path",
+        "s3://fullcontact-data-imports/sovrn/mobile_data/202112*/",
+        "--output-path",
+        "s3://fullcontact-data-imports/sovrn/test/deduplicated_maids/",
+        "--stats-path",
+        "s3://fullcontact-data-imports/sovrn/test/Ingestion_stats.json"
+      ],
+      "sparkSubmitParameters": "--conf spark.kubernetes.driver.label.spotinst.io/node-lifecycle=od --conf spark.kubernetes.driver.label.spotinst.io/restrict-scale-down=true --conf spark.kubernetes.executor.label.spotinst.io/restrict-scale-down=true --conf spark.executor.instances=128 --conf spark.executor.memory=15000M --conf spark.executor.cores=1 --conf spark.driver.cores=1 --conf spark.kubernetes.allocation.batch.size=128 --class com.fullcontact.pipeline.preprocess.SovrnIngest"
+    }
+  },
+  "tags": {
+    "team": "dataplatform"
+  }
+}

@@ -27,6 +27,7 @@ import org.apache.hudi.examples.common.HoodieExampleSparkUtils;
 import org.apache.hudi.keygen.NonpartitionedKeyGenerator;
 import org.apache.hudi.DataSourceWriteOptions;
 import org.apache.spark.SparkConf;
+import org.apache.spark.sql.Column;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.Dataset;
@@ -39,37 +40,32 @@ public class HoodieSparkBootstrapExample {
 
 
   public static void main(String[] args) throws Exception {
-    if (args.length < 5) {
-      System.err.println("Usage: HoodieWriteClientExample <tablePath> <tableName>");
-      System.exit(1);
-    }
-    String recordKey = args[0];
-    String tableName = args[1];
-    String partitionPath = args[2];
-    String preCombineField = args[3];
-    String basePath = args[4];
+//    if (args.length < 5) {
+//      System.err.println("Usage: HoodieWriteClientExample <tablePath> <tableName>");
+//      System.exit(1);
+//    }
+//    String recordKey = args[0];
+//    String tableName = args[1];
+//    String partitionPath = args[2];
+//    String preCombineField = args[3];
+//    String basePath = args[4];
 
     SparkConf sparkConf = HoodieExampleSparkUtils.defaultSparkConf("hoodie-client-example");
 
-    SparkSession spark = SparkSession
-            .builder()
-            .appName("Java Spark SQL basic example")
-            .config("spark.some.config.option", "some-value")
-            .enableHiveSupport()
-            .getOrCreate();
+    SparkSession spark = HoodieExampleSparkUtils.defaultSparkSession("Java Spark SQL basic example");
 
-    Dataset df =  spark.emptyDataFrame();
+    spark.read().parquet("file:///Users/joey.idler/Documents/hudi/")
+            .withColumnRenamed("maid.value","maid_value")
+            .withColumnRenamed("maid.ipAddress","maid_ip_address")
+            .withColumnRenamed("maid.type","maid_type")
 
-    df.write().format("hudi").option(HoodieWriteConfig.TBL_NAME.key(), tableName)
-            .option(DataSourceWriteOptions.OPERATION().key(), DataSourceWriteOptions.BOOTSTRAP_OPERATION_OPT_VAL())
-            .option(DataSourceWriteOptions.RECORDKEY_FIELD().key(), recordKey)
-            .option(DataSourceWriteOptions.PARTITIONPATH_FIELD().key(), partitionPath)
-            .option(DataSourceWriteOptions.PRECOMBINE_FIELD().key(), preCombineField)
-            .option(HoodieTableConfig.BASE_FILE_FORMAT.key(), HoodieFileFormat.ORC.name())
-            .option(HoodieBootstrapConfig.BASE_PATH.key(), basePath)
-            .option(HoodieBootstrapConfig.KEYGEN_CLASS_NAME.key(), NonpartitionedKeyGenerator.class.getCanonicalName())
-            .mode(SaveMode.Overwrite).save("/hudi/"+tableName);
+            .write().format("org.apache.hudi")
+            .option(DataSourceWriteOptions.OPERATION().key(), DataSourceWriteOptions.BULK_INSERT_OPERATION_OPT_VAL())
+            .option("hoodie.datasource.write.storage.type", HoodieTableType.COPY_ON_WRITE.name())
+            .option(DataSourceWriteOptions.RECORDKEY_FIELD().key(), "fcid")
+            .option(HoodieWriteConfig.TBL_NAME.key(),"maids_hudi")
+            .mode(SaveMode.Append)
+            .save("file:///Users/joey.idler/Documents/hudi_processed/maids_hudi");
 
-    df.count();
   }
 }

@@ -1,0 +1,45 @@
+{
+        "name": "hudi-delta-streamer-maids-test",
+        "virtualClusterId": "nuseoxy1yjxn11rp33q21jqsj",
+        "executionRoleArn": "arn:aws:iam::966965295085:role/eks-spark-dataplatform",
+        "releaseLabel": "emr-5.32.0-latest",
+        "configurationOverrides": {
+            "monitoringConfiguration": {
+                "persistentAppUI": "ENABLED",
+                "s3MonitoringConfiguration": {
+                    "logUri": "s3://fullcontact-enrichment/emr-eks/dataplatform/"
+                }
+            }
+        },
+        "jobDriver": {
+            "sparkSubmitJobDriver": {
+                "entryPoint": "s3://fullcontact-enrichment/jidler/jars/hudi/hudi-utilities-bundle_2.12-0.11.0-SNAPSHOT.jar",
+                "entryPointArguments": [
+                  "--hoodie-conf",
+                  "hoodie.datasource.write.recordkey.field=mobile_ad_id",
+                  "--hoodie-conf",
+                  "hoodie.datasource.write.partitionpath.field=",
+                  "--hoodie-conf",
+                  "hoodie.deltastreamer.source.dfs.root=s3://fullcontact-enrichment/jidler/test-data/sovrn/mobile_data/20211204",
+                  "--hoodie-conf",
+                  "hoodie.deltastreamer.csv.header=false",
+                  "--hoodie-conf",
+                  "hoodie.deltastreamer.csv.sep=\\t",
+                  "--target-base-path",
+                  "s3://fullcontact-enrichment/jidler/test-data/hudi/sovrn/mobile_data",
+                  "--target-table",
+                  "mobile_data",
+                  "--table-type",
+                  "COPY_ON_WRITE",
+                  "--source-ordering-field",
+                  "timestamp",
+                  "--source-class",
+                  "org.apache.hudi.utilities.sources.CsvDFSSource"
+                ],
+                "sparkSubmitParameters": "--conf spark.kubernetes.driver.label.spotinst.io/node-lifecycle=od --conf spark.kubernetes.driver.label.spotinst.io/restrict-scale-down=true --conf spark.kubernetes.executor.label.spotinst.io/restrict-scale-down=true --conf spark.executor.instances=64 --conf spark.executor.memory=2500M --conf spark.executor.cores=1 --conf spark.driver.cores=1 --conf spark.kubernetes.allocation.batch.size=64 --conf spark.serializer=org.apache.spark.serializer.KryoSerializer --class org.apache.hudi.utilities.deltastreamer.HoodieDeltaStreamer"
+            }
+        },
+        "tags": {
+            "team": "dataplatform"
+        }
+    }

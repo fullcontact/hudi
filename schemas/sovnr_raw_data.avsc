@@ -1,0 +1,92 @@
+{
+  "type" : "record",
+  "name" : "mobile_data",
+  "fields" : [
+    {
+      "name" : "maid",
+      "type" : "string"
+    }, {
+      "name" : "type",
+      "type" : "string"
+    }, {
+      "name" : "ip",
+      "type": ["null", "string"],
+      "default": null
+    }, {
+      "name" : "timestamp",
+      "type": ["null", "long"],
+      "default": 0
+    }, {
+      "name" : "md5_hem",
+      "type" : "string"
+    }, {
+      "name" : "sha1_hem",
+      "type" : "string"
+    }, {
+      "name" : "sha257_hem",
+      "type" : "string"
+    }, {
+      "name" : "country_code",
+      "type": ["null", "string"],
+      "default": null
+    }, {
+      "name" : "device_model",
+      "type": ["null", "string"],
+      "default": null
+    }, {
+      "name" : "os_version",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "device_language",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "user_agent",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "model",
+      "type": ["null", "string"],
+      "default": null
+    },
+
+    {
+      "name": "package_name",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "wireless_carrier",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "wireless_network",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "wireless_roaming",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "uppercased_md5",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "uppercased_sha1",
+      "type": ["null", "string"],
+      "default": null
+    },
+    {
+      "name": "uppercased_sha256",
+      "type": ["null", "string"],
+      "default": null
+    }]
+}
